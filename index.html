@@ -573,66 +573,79 @@
     <script>
         let systemCrashed = false;
 
-        // Assets mapped exactly to your specified filenames
+        // Verify elements and map audio/video files
         const bootVideo = document.getElementById('boot-video');
         const startupAudio = new Audio('xbox360a.mp3');
 
         function powerOnConsole() {
-            // 1. Dismiss interaction prompt layer smoothly
-            document.getElementById('power-on-layer').style.opacity = '0';
-            setTimeout(() => document.getElementById('power-on-layer').style.display = 'none', 500);
-
-            // 2. Reveal the video boot layer
-            document.getElementById('startup-layer').style.display = 'flex';
-            
-            // 3. Reset playback states to the absolute beginning
-            bootVideo.currentTime = 0;
-            if (startupAudio) startupAudio.currentTime = 0;
-
-            // 4. Play the audio separately (Bypasses video block constraints)
-            try {
-                startupAudio.play().catch(e => console.log("Audio play blocked:", e));
-            } catch(err) { console.log("Audio error:", err); }
-
-            // 5. Play the video with a secure promise handler to prevent script crashing
-            try {
-                let playPromise = bootVideo.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.log("Video autoplay was prevented, forcing fallback timer:", error);
-                    });
-                }
-            } catch(err) {
-                console.log("Video execution error:", err);
+            // 1. Hide the power button overlay instantly
+            const powerLayer = document.getElementById('power-on-layer');
+            if (powerLayer) {
+                powerLayer.style.opacity = '0';
+                setTimeout(() => powerLayer.style.display = 'none', 500);
             }
 
-            // 6. THE ULTIMATE SAFETY NET: Forces the dashboard to open after 6 seconds 
-            // even if the video completely freezes or fails to play.
+            // 2. Display the boot video layer
+            const startupLayer = document.getElementById('startup-layer');
+            if (startupLayer) startupLayer.style.display = 'flex';
+            
+            // 3. Reset playback tracking positions
+            if (bootVideo) bootVideo.currentTime = 0;
+            if (startupAudio) startupAudio.currentTime = 0;
+
+            // 4. Play audio independently 
+            if (startupAudio) {
+                startupAudio.play().catch(e => console.log("Audio playback blocked:", e));
+            }
+
+            // 5. Play video using browser promise handling
+            if (bootVideo) {
+                try {
+                    let playPromise = bootVideo.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.log("Video autoplay prevented, forcing fallback timer.", error);
+                        });
+                    }
+                } catch(err) {
+                    console.log("Video track failure:", err);
+                }
+            }
+
+            // 6. 6-Second Safety Fallback Timer
+            // If anything breaks with the video, this forces the dashboard open no matter what!
             let bootFallback = setTimeout(() => {
-                console.log("Fallback triggered: Moving to dashboard.");
+                console.log("Safety fallback executed: Transitioning to dashboard.");
                 skipToDashboard();
             }, 6000);
 
-            // If the video plays and finishes normally, clear the timer and transition
-            bootVideo.onended = () => {
-                clearTimeout(bootFallback);
-                skipToDashboard();
-            };
+            if (bootVideo) {
+                bootVideo.onended = () => {
+                    clearTimeout(bootFallback);
+                    skipToDashboard();
+                };
+            }
         }
 
-        // Clean transition handler out of the video into the blades dashboard
+        // Handles transition cleanly from video layer to blades dashboard layer
         function skipToDashboard() {
-            document.getElementById('startup-layer').style.opacity = '0';
+            const startupLayer = document.getElementById('startup-layer');
+            const dashboardLayer = document.getElementById('dashboard-layer');
+            
+            if (startupLayer) startupLayer.style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('startup-layer').style.display = 'none';
-                document.getElementById('dashboard-layer').style.opacity = '1';
-                renderBladePositions();
+                if (startupLayer) startupLayer.style.display = 'none';
+                if (dashboardLayer) {
+                    dashboardLayer.style.opacity = '1';
+                    renderBladePositions();
+                }
             }, 600);
         }
 
         // --- DASHBOARD BLADES MANAGEMENT ENGINE ---
         let currentBladeIdx = 0;
-        const maxBladesCount = 5;
+        // FIXED: Count set to 5 to account for the extra System/Dashboard blades
+        const maxBladesCount = 5; 
         
         function renderBladePositions() {
             if (systemCrashed) return;
@@ -642,15 +655,16 @@
                 targetedBlade.classList.remove('active');
                 
                 if (i < currentBladeIdx) {
+                    // Blades to the left of active
                     targetedBlade.style.left = `${i * 45}px`;
                 } else if (i === currentBladeIdx) {
+                    // Active blade positioning
                     targetedBlade.style.left = `${220 + (i * 20)}px`;
                     targetedBlade.classList.add('active');
                     restoreDefaultSelection(targetedBlade);
                 } else {
-    // Changing 50 to 35 spaces them out cleanly on the right edge
-    targetedBlade.style.left = `${window.innerWidth - ((maxBladesCount - i) * 35)}px`;
-}
+                    // FIXED: Spacing changed from 50 to 35 so they don't stack/glitch on the right edge
+                    targetedBlade.style.left = `${window.innerWidth - ((maxBladesCount - i) * 35)}px`;
                 }
             }
         }
@@ -666,6 +680,8 @@
         function scrollItemSelection(directionString) {
             if (systemCrashed) return;
             const activeBladeElement = document.getElementById(`blade-${currentBladeIdx}`);
+            if (!activeBladeElement) return;
+            
             const itemsList = Array.from(activeBladeElement.querySelectorAll('.menu-item'));
             let currentHighlightIndex = itemsList.findIndex(elem => elem.classList.contains('selected'));
             
@@ -711,18 +727,23 @@
                 osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 2.0);
             } catch(e){}
-            document.getElementById('dashboard-layer').style.display = 'none';
-            document.getElementById('crash-screen').style.display = 'flex';
+            
+            const dashLayer = document.getElementById('dashboard-layer');
+            const crashScreen = document.getElementById('crash-screen');
+            if (dashLayer) dashLayer.style.display = 'none';
+            if (crashScreen) crashScreen.style.display = 'flex';
         }
 
         window.addEventListener('resize', () => {
-            if (document.getElementById('dashboard-layer').style.opacity === '1') {
+            const dashLayer = document.getElementById('dashboard-layer');
+            if (dashLayer && dashLayer.style.opacity === '1') {
                 renderBladePositions();
             }
         });
 
         window.addEventListener('keydown', (event) => {
-            if (systemCrashed || document.getElementById('dashboard-layer').style.opacity !== '1') return;
+            const dashLayer = document.getElementById('dashboard-layer');
+            if (systemCrashed || !dashLayer || dashLayer.style.opacity !== '1') return;
 
             if (event.key === 'ArrowLeft' || event.key === 'a' || event.key === 'A') {
                 if (currentBladeIdx > 0) { currentBladeIdx--; playTickNoise(true); renderBladePositions(); }
@@ -734,13 +755,15 @@
                 scrollItemSelection('up');
             } else if (event.key === 'Enter') {
                 const targetBlade = document.getElementById(`blade-${currentBladeIdx}`);
-                const activeSelection = targetBlade.querySelector('.menu-item.selected');
+                if (!targetBlade) return;
                 
+                const activeSelection = targetBlade.querySelector('.menu-item.selected');
                 if (activeSelection) {
                     if (activeSelection.classList.contains('danger-zone')) {
                         triggerSystemCrash();
                     } else {
-                        const titleText = activeSelection.querySelector('h4').innerText;
+                        const titleHeading = activeSelection.querySelector('h4');
+                        const titleText = titleHeading ? titleHeading.innerText : "Item";
                         alert(`Simulated Action: Launching "${titleText}"`);
                     }
                 }
