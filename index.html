@@ -536,30 +536,60 @@
         let systemCrashed = false;
 
         // Assets mapped exactly to your specified filenames
-        const bootVideo = document.getElementById('xbox360.mp4');
-        const startupAudio = new Audio('xbox360a.mp3');
+        const bootVideo = document.getElementById('boot-video');
+        const startupAudio = new Audio('XBox 360 Startup - QuickSounds.com.mp3');
 
         function powerOnConsole() {
-            // Dismiss interaction prompt layer
+            // 1. Dismiss interaction prompt layer smoothly
             document.getElementById('power-on-layer').style.opacity = '0';
             setTimeout(() => document.getElementById('power-on-layer').style.display = 'none', 500);
 
-            // Show and execute the MP4 startup layer
+            // 2. Reveal the video boot layer
             document.getElementById('startup-layer').style.display = 'flex';
             
-            // Play audio track and video synchronously
-            startupAudio.play().catch(e => console.log("Audio play blocked/failed:", e));
-            bootVideo.play().catch(e => console.log("Video play blocked/failed:", e));
+            // 3. Reset playback states to the absolute beginning
+            bootVideo.currentTime = 0;
+            if (startupAudio) startupAudio.currentTime = 0;
 
-            // When the mp4 finishes playing, transition perfectly to dashboard
+            // 4. Play the audio separately (Bypasses video block constraints)
+            try {
+                startupAudio.play().catch(e => console.log("Audio play blocked:", e));
+            } catch(err) { console.log("Audio error:", err); }
+
+            // 5. Play the video with a secure promise handler to prevent script crashing
+            try {
+                let playPromise = bootVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        console.log("Video autoplay was prevented, forcing fallback timer:", error);
+                    });
+                }
+            } catch(err) {
+                console.log("Video execution error:", err);
+            }
+
+            // 6. THE ULTIMATE SAFETY NET: Forces the dashboard to open after 6 seconds 
+            // even if the video completely freezes or fails to play.
+            let bootFallback = setTimeout(() => {
+                console.log("Fallback triggered: Moving to dashboard.");
+                skipToDashboard();
+            }, 6000);
+
+            // If the video plays and finishes normally, clear the timer and transition
             bootVideo.onended = () => {
-                document.getElementById('startup-layer').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('startup-layer').style.display = 'none';
-                    document.getElementById('dashboard-layer').style.opacity = '1';
-                    renderBladePositions();
-                }, 600);
+                clearTimeout(bootFallback);
+                skipToDashboard();
             };
+        }
+
+        // Clean transition handler out of the video into the blades dashboard
+        function skipToDashboard() {
+            document.getElementById('startup-layer').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('startup-layer').style.display = 'none';
+                document.getElementById('dashboard-layer').style.opacity = '1';
+                renderBladePositions();
+            }, 600);
         }
 
         // --- DASHBOARD BLADES MANAGEMENT ENGINE ---
@@ -570,6 +600,7 @@
             if (systemCrashed) return;
             for (let i = 0; i < maxBladesCount; i++) {
                 const targetedBlade = document.getElementById(`blade-${i}`);
+                if (!targetedBlade) continue;
                 targetedBlade.classList.remove('active');
                 
                 if (i < currentBladeIdx) {
@@ -678,7 +709,8 @@
 
         setInterval(() => {
             const timeObj = new Date();
-            document.getElementById('live-clock').innerText = timeObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) clockEl.innerText = timeObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }, 1000);
     </script>
 </body>
