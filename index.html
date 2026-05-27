@@ -162,19 +162,20 @@
         }
 
         .blade {
-            position: absolute;
-            top: 0;
-            width: 800px;
-            height: 100%;
-            background: linear-gradient(180deg, #333333 0%, #1e1e1e 100%);
-            border-left: 4px solid #107c10;
-            border-radius: 24px 0 0 24px;
-            box-shadow: -15px 0 35px rgba(0,0,0,0.6);
-            transition: left 0.45s cubic-bezier(0.1, 0.9, 0.2, 1);
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-        }
+    position: absolute;
+    top: 0;
+    width: 800px;
+    height: 100%;
+    /* CHANGED: From dark charcoal to authentic 2005 silver-grey gradient */
+    background: linear-gradient(180deg, #e0e0e0 0%, #b5b5b5 100%); 
+    border-left: 4px solid #107c10;
+    border-radius: 24px 0 0 24px;
+    box-shadow: -15px 0 35px rgba(0,0,0,0.15); /* Softened shadow for light background */
+    transition: left 0.45s cubic-bezier(0.1, 0.9, 0.2, 1);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
 
         .blade-header {
             position: absolute;
@@ -631,7 +632,7 @@
 
         // --- DASHBOARD BLADES MANAGEMENT ENGINE ---
         let currentBladeIdx = 0;
-        const maxBladesCount = 4;
+        const maxBladesCount = 5;
         
         function renderBladePositions() {
             if (systemCrashed) return;
@@ -647,7 +648,9 @@
                     targetedBlade.classList.add('active');
                     restoreDefaultSelection(targetedBlade);
                 } else {
-                    targetedBlade.style.left = `${window.innerWidth - ((maxBladesCount - i) * 50)}px`;
+    // Changing 50 to 35 spaces them out cleanly on the right edge
+    targetedBlade.style.left = `${window.innerWidth - ((maxBladesCount - i) * 35)}px`;
+}
                 }
             }
         }
