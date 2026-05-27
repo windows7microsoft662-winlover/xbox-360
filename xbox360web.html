@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xbox 360 "Blades" Dashboard Simulator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+        }
+
+        #screen {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- POWER ON OVERLAY LAYER --- */
+        #power-on-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            color: #fff;
+            cursor: pointer;
+            transition: opacity 0.5s ease;
+        }
+
+        .power-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #222;
+            border: 3px solid #444;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transition: all 0.2s ease;
+        }
+
+        .power-btn::before {
+            content: '⏻';
+            font-size: 36px;
+            color: #666;
+            transition: color 0.2s ease;
+        }
+
+        #power-on-layer:hover .power-btn {
+            border-color: #107c10;
+            box-shadow: 0 0 30px rgba(16, 124, 16, 0.4);
+        }
+        #power-on-layer:hover .power-btn::before {
+            color: #107c10;
+        }
+
+        .power-text {
+            margin-top: 20px;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #888;
+        }
+
+        /* --- STARTUP VIDEO BOOT LAYER --- */
+        #startup-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        #boot-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Fills screen perfectly without black bars */
+        }
+
+        /* --- BLADES DASHBOARD LAYER --- */
+        #dashboard-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #252525 0%, #121212 100%);
+            background-image: radial-gradient(circle at 85% 15%, rgba(16, 124, 16, 0.18) 0%, transparent 55%), 
+                              radial-gradient(circle at 15% 85%, rgba(255,255,255,0.02) 0%, transparent 60%);
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 35px 50px;
+            color: #fff;
+            transition: opacity 1.2s ease-in-out;
+            overflow: hidden;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+        }
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 6px 22px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .avatar {
+            width: 32px;
+            height: 32px;
+            background: radial-gradient(circle, #209c20 0%, #107c10 100%);
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        .gamertag { font-weight: 600; font-size: 15px; letter-spacing: 0.5px; }
+        .clock { font-size: 18px; font-weight: 300; color: rgba(255,255,255,0.8); }
+
+        .blades-container {
+            position: relative;
+            width: 100%;
+            height: 68vh;
+            margin-top: 20px;
+        }
+
+        .blade {
+            position: absolute;
+            top: 0;
+            width: 800px;
+            height: 100%;
+            background: linear-gradient(180deg, #333333 0%, #1e1e1e 100%);
+            border-left: 4px solid #107c10;
+            border-radius: 24px 0 0 24px;
+            box-shadow: -15px 0 35px rgba(0,0,0,0.6);
+            transition: left 0.45s cubic-bezier(0.1, 0.9, 0.2, 1);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blade-header {
+            position: absolute;
+            left: -48px;
+            top: 110px;
+            transform: rotate(-90deg);
+            transform-origin: center center;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255,255,255,0.3);
+            width: 160px;
+            text-align: right;
+        }
+
+        .blade.active .blade-header {
+            color: #107c10;
+            text-shadow: 0 0 12px rgba(16, 124, 16, 0.7);
+        }
+
+        .blade-content {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.2s, transform 0.3s;
+            height: 100%;
+            display: none;
+        }
+
+        .blade.active .blade-content {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.15s;
+        }
+
+        .blade-title {
+            font-size: 34px;
+            font-weight: 300;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .menu-item {
+            background: rgba(255,255,255,0.04);
+            border: 2px solid transparent;
+            padding: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .menu-item h4 { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+        .menu-item p { font-size: 13px; color: rgba(255,255,255,0.6); }
+
+        .menu-item.selected {
+            background: #107c10;
+            border-color: #ffffff;
+            transform: scale(1.025);
+            box-shadow: 0 5px 15px rgba(16, 124, 16, 0.4);
+        }
+
+        .menu-item.danger-zone.selected {
+            background: #b71c1c !important;
+            box-shadow: 0 5px 15px rgba(183, 28, 28, 0.6);
+        }
+
+        .menu-item.selected p { color: rgba(255,255,255,0.9); }
+        .menu-item-icon { width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 8px; flex-shrink: 0; }
+
+        .footer-bar {
+            display: flex;
+            gap: 25px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            z-index: 5;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 15px;
+        }
+
+        .btn-hint { display: flex; align-items: center; gap: 6px; }
+        .btn-icon {
+            width: 22px; height: 22px; border-radius: 50%;
+            display: inline-flex; justify-content: center; align-items: center;
+            font-weight: bold; font-size: 11px; color: #fff;
+        }
+        .btn-a { background: #107c10; box-shadow: 0 0 5px #107c10;}
+        .btn-lb, .btn-rb { background: #444; border-radius: 5px; padding: 0 5px; width: auto; }
+
+        /* --- CRASH OVERLAY SCREEN --- */
+        #crash-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .error-message {
+            max-width: 650px;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .error-code {
+            font-size: 75px;
+            font-weight: bold;
+            color: #b71c1c;
+            letter-spacing: 4px;
+            margin-top: 10px;
+        }
+
+        .rrod-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #222;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 10px #000;
+        }
+
+        .rrod-quadrant {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border: 4px solid #333;
+            border-radius: 6px;
+        }
+
+        .q1 { top: 6px; left: 6px; border-top-left-radius: 100%; }
+        .q2 { top: 6px; right: 6px; border-top-right-radius: 100%; }
+        .q3 { bottom: 6px; left: 6px; border-bottom-left-radius: 100%; }
+        .q4 { bottom: 6px; right: 6px; border-bottom-right-radius: 100%; }
+
+        .rrod-active {
+            border-color: #ff1100 !important;
+            filter: drop-shadow(0 0 6px #ff1100);
+            animation: rrod-blink 0.6s infinite alternate;
+        }
+
+        @keyframes rrod-blink {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .reset-hint {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="screen">
+        <div id="power-on-layer" onclick="powerOnConsole()">
+            <div class="power-btn"></div>
+            <div class="power-text">Click to Power On</div>
+        </div>
+
+        <div id="startup-layer">
+            <video id="boot-video" src="xbox360.mp4" playsinline></video>
+        </div>
+
+        <div id="dashboard-layer">
+            <div class="top-bar">
+                <div class="profile-card">
+                    <div class="avatar"></div>
+                    <div class="gamertag">RetroGamer360</div>
+                </div>
+                <div class="clock" id="live-clock">12:00 PM</div>
+            </div>
+
+            <div class="blades-container" id="blades-box">
+                <div class="blade" id="blade-0">
+                    <div class="blade-header">Xbox Live</div>
+                    <div class="blade-content">
+                        <div class="blade-title">Xbox Live</div>
+                        <div class="grid">
+                            <div class="menu-item selected">
+                                <div class="menu-item-icon" style="background: radial-gradient(#ffaa00, transparent);"></div>
+                                <div>
+                                    <h4>Xbox Live Marketplace</h4>
+                                    <p>Download new arcade games, demos, and trailers</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#00aaff, transparent);"></div>
+                                <div>
+                                    <h4>Friends List</h4>
+                                    <p>See what your friends are playing online</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#ff00aa, transparent);"></div>
+                                <div>
+                                    <h4>Messages</h4>
+                                    <p>Check your system invites and text messages</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#00ffaa, transparent);"></div>
+                                <div>
+                                    <h4>Redeem Code</h4>
+                                    <p>Enter a 25-digit prepaid card token or ticket</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blade" id="blade-1">
+                    <div class="blade-header">Games</div>
+                    <div class="blade-content">
+                        <div class="blade-title">Games library</div>
+                        <div class="grid">
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#107c10, transparent);"></div>
+                                <div>
+                                    <h4>Play Halo 3</h4>
+                                    <p>Launch the game currently in disc tray</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#cc1111, transparent);"></div>
+                                <div>
+                                    <h4>Achievements</h4>
+                                    <p>View locked targets and your total Gamerscore</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#555, transparent);"></div>
+                                <div>
+                                    <h4>Xbox Live Arcade</h4>
+                                    <p>Play downloaded bite-sized retro games</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blade" id="blade-2">
+                    <div class="blade-header">Media</div>
+                    <div class="blade-content">
+                        <div class="blade-title">Media Center</div>
+                        <div class="grid">
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#9c27b0, transparent);"></div>
+                                <div>
+                                    <h4>Music Player</h4>
+                                    <p>Listen to custom audio tracks or rip audio CDs</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#009688, transparent);"></div>
+                                <div>
+                                    <h4>Video Player</h4>
+                                    <p>Watch saved movies, clips, and media files</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#ff5722, transparent);"></div>
+                                <div>
+                                    <h4>Pictures</h4>
+                                    <p>View custom background photos and screenshots</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="blade" id="blade-3">
+                    <div class="blade-header">System</div>
+                    <div class="blade-content">
+                        <div class="blade-title">System Settings</div>
+                        <div class="grid">
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#607d8b, transparent);"></div>
+                                <div>
+                                    <h4>Console Settings</h4>
+                                    <p>Adjust audio, clock, and widescreen display formats</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#795548, transparent);"></div>
+                                <div>
+                                    <h4>Storage Management</h4>
+                                    <p>Manage content on Hard Drives and Memory Units</p>
+                                </div>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-item-icon" style="background: radial-gradient(#e91e63, transparent);"></div>
+                                <div>
+                                    <h4>Network Settings</h4>
+                                    <p>Configure IP layouts and test connection integrity</p>
+                                </div>
+                            </div>
+                            <div class="menu-item danger-zone">
+                                <div class="menu-item-icon" style="background: radial-gradient(#b71c1c, transparent);"></div>
+                                <div>
+                                    <h4>Simulate Crash</h4>
+                                    <p>Trigger a simulated hardware failure error sequence</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bar">
+                <div class="btn-hint"><span class="btn-icon btn-lb">LB</span> <span class="btn-icon btn-rb">RB</span> Switch Blade</div>
+                <div class="btn-hint"><span class="btn-icon btn-a">A</span> Select Item</div>
+                <div class="btn-hint">Navigation: Use <strong>Arrow Keys / WASD</strong> & <strong>Enter</strong></div>
+            </div>
+        </div>
+
+        <div id="crash-screen">
+            <div class="error-message">
+                <p>System error. Please contact Xbox Customer Support.</p>
+                <p style="margin-top: 10px; color: #aaa; font-size: 15px;">Une erreur système s'est produite. Contactez le support technique Xbox.</p>
+            </div>
+            
+            <div class="rrod-ring">
+                <div class="rrod-quadrant q1 rrod-active"></div>
+                <div class="rrod-quadrant q2"></div> 
+                <div class="rrod-quadrant q3 rrod-active"></div>
+                <div class="rrod-quadrant q4 rrod-active"></div>
+            </div>
+
+            <div class="error-code">E74</div>
+            <div class="reset-hint">Press F5 or refresh page to reboot console</div>
+        </div>
+    </div>
+
+    <script>
+        let systemCrashed = false;
+
+        // Assets mapped exactly to your specified filenames
+        const bootVideo = document.getElementById('boot-video');
+        const startupAudio = new Audio('xbox360a.mp3');
+
+        function powerOnConsole() {
+            // Dismiss interaction prompt layer
+            document.getElementById('power-on-layer').style.opacity = '0';
+            setTimeout(() => document.getElementById('power-on-layer').style.display = 'none', 500);
+
+            // Show and execute the MP4 startup layer
+            document.getElementById('startup-layer').style.display = 'flex';
+            
+            // Play audio track and video synchronously
+            startupAudio.play().catch(e => console.log("Audio play blocked/failed:", e));
+            bootVideo.play().catch(e => console.log("Video play blocked/failed:", e));
+
+            // When the mp4 finishes playing, transition perfectly to dashboard
+            bootVideo.onended = () => {
+                document.getElementById('startup-layer').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('startup-layer').style.display = 'none';
+                    document.getElementById('dashboard-layer').style.opacity = '1';
+                    renderBladePositions();
+                }, 600);
+            };
+        }
+
+        // --- DASHBOARD BLADES MANAGEMENT ENGINE ---
+        let currentBladeIdx = 0;
+        const maxBladesCount = 4;
+        
+        function renderBladePositions() {
+            if (systemCrashed) return;
+            for (let i = 0; i < maxBladesCount; i++) {
+                const targetedBlade = document.getElementById(`blade-${i}`);
+                targetedBlade.classList.remove('active');
+                
+                if (i < currentBladeIdx) {
+                    targetedBlade.style.left = `${i * 45}px`;
+                } else if (i === currentBladeIdx) {
+                    targetedBlade.style.left = `${220 + (i * 20)}px`;
+                    targetedBlade.classList.add('active');
+                    restoreDefaultSelection(targetedBlade);
+                } else {
+                    targetedBlade.style.left = `${window.innerWidth - ((maxBladesCount - i) * 50)}px`;
+                }
+            }
+        }
+
+        function restoreDefaultSelection(activeBladeElement) {
+            const currentItems = activeBladeElement.querySelectorAll('.menu-item');
+            currentItems.forEach((element, index) => {
+                if (index === 0) element.classList.add('selected');
+                else element.classList.remove('selected');
+            });
+        }
+
+        function scrollItemSelection(directionString) {
+            if (systemCrashed) return;
+            const activeBladeElement = document.getElementById(`blade-${currentBladeIdx}`);
+            const itemsList = Array.from(activeBladeElement.querySelectorAll('.menu-item'));
+            let currentHighlightIndex = itemsList.findIndex(elem => elem.classList.contains('selected'));
+            
+            if (currentHighlightIndex !== -1) {
+                itemsList[currentHighlightIndex].classList.remove('selected');
+                if (directionString === 'down') {
+                    currentHighlightIndex = (currentHighlightIndex + 1) % itemsList.length;
+                } else if (directionString === 'up') {
+                    currentHighlightIndex = (currentHighlightIndex - 1 + itemsList.length) % itemsList.length;
+                }
+                itemsList[currentHighlightIndex].classList.add('selected');
+                playTickNoise(false);
+            }
+        }
+
+        function playTickNoise(isBladeChange) {
+            if (systemCrashed) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const audioCtx = new AudioContext();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(isBladeChange ? 350 : 220, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+            } catch(e){}
+        }
+
+        function triggerSystemCrash() {
+            systemCrashed = true;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const audioCtx = new AudioContext();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 2.0);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 2.0);
+            } catch(e){}
+            document.getElementById('dashboard-layer').style.display = 'none';
+            document.getElementById('crash-screen').style.display = 'flex';
+        }
+
+        window.addEventListener('resize', () => {
+            if (document.getElementById('dashboard-layer').style.opacity === '1') {
+                renderBladePositions();
+            }
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if (systemCrashed || document.getElementById('dashboard-layer').style.opacity !== '1') return;
+
+            if (event.key === 'ArrowLeft' || event.key === 'a' || event.key === 'A') {
+                if (currentBladeIdx > 0) { currentBladeIdx--; playTickNoise(true); renderBladePositions(); }
+            } else if (event.key === 'ArrowRight' || event.key === 'd' || event.key === 'D') {
+                if (currentBladeIdx < maxBladesCount - 1) { currentBladeIdx++; playTickNoise(true); renderBladePositions(); }
+            } else if (event.key === 'ArrowDown' || event.key === 's' || event.key === 'S') {
+                scrollItemSelection('down');
+            } else if (event.key === 'ArrowUp' || event.key === 'w' || event.key === 'W') {
+                scrollItemSelection('up');
+            } else if (event.key === 'Enter') {
+                const targetBlade = document.getElementById(`blade-${currentBladeIdx}`);
+                const activeSelection = targetBlade.querySelector('.menu-item.selected');
+                
+                if (activeSelection) {
+                    if (activeSelection.classList.contains('danger-zone')) {
+                        triggerSystemCrash();
+                    } else {
+                        const titleText = activeSelection.querySelector('h4').innerText;
+                        alert(`Simulated Action: Launching "${titleText}"`);
+                    }
+                }
+            }
+        });
+
+        setInterval(() => {
+            const timeObj = new Date();
+            document.getElementById('live-clock').innerText = timeObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }, 1000);
+    </script>
+</body>
+</html>
