@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xbox 360 Dashboard (2011 Metro Edition)</title>
+    <title>Xbox 360 Simulator</title>
     <style>
         /* --- GLOBAL BASE LAYOUT --- */
         * {
@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #0b0b0b;
+            background-color: #dfdfdf;
             color: #ffffff;
             font-family: 'Segoe UI', Arial, sans-serif;
             overflow: hidden;
@@ -398,6 +398,9 @@
             <div class="power-button" onclick="powerOnConsole()" role="button" aria-label="Power On Console">
                 <div class="power-icon"></div>
             </div>
+            <div class="power-hint">Press Power Button to Boot</div>
+        </div>
+
         <div id="startup-layer">
             <video id="boot-video" preload="auto" muted playsinline>
                 <source src="xbox360.mp4" type="video/mp4">
@@ -533,7 +536,7 @@
             
             <div class="rrod-ring">
                 <div class="rrod-quadrant q1 rrod-active"></div>
-                <div class="rrod-quadrant q2 rrod active"></div> 
+                <div class="rrod-quadrant q2"></div> 
                 <div class="rrod-quadrant q3 rrod-active"></div>
                 <div class="rrod-quadrant q4 rrod-active"></div>
             </div>
