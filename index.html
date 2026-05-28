@@ -382,16 +382,25 @@
         <div class="blade-content">
             <div class="menu-title">Xbox Live Marketplace</div>
             <div class="menu-item selected">
-                <h4>Games & Demos</h4>
-                <p>Download new arcade titles and game trailers.</p>
+                <div class="menu-item-icon" style="background: radial-gradient(#f68c1f, transparent);"></div>
+                <div>
+                    <h4>Games & Demos</h4>
+                    <p>Download new arcade titles and game trailers.</p>
+                </div>
             </div>
             <div class="menu-item">
-                <h4>Themes & Gamer Pics</h4>
-                <p>Customize your dashboard look and profile style.</p>
+                <div class="menu-item-icon" style="background: radial-gradient(#333, transparent);"></div>
+                <div>
+                    <h4>Themes & Gamer Pics</h4>
+                    <p>Customize your dashboard look and profile style.</p>
+                </div>
             </div>
             <div class="menu-item">
-                <h4>Featured Downloads</h4>
-                <p>Check out the latest seasonal marketplace expansions.</p>
+                <div class="menu-item-icon" style="background: radial-gradient(#333, transparent);"></div>
+                <div>
+                    <h4>Featured Downloads</h4>
+                    <p>Check out the latest seasonal marketplace expansions.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -401,16 +410,18 @@
         <div class="blade-content">
             <div class="menu-title">Xbox Live Community</div>
             <div class="menu-item">
-                <h4>Messages</h4>
-                <p>Read text and voice invites from your Xbox Live friends.</p>
+                <div class="menu-item-icon" style="background: radial-gradient(#ff63a5, transparent);"></div>
+                <div>
+                    <h4>Messages</h4>
+                    <p>Read text and voice invites from your Xbox Live friends.</p>
+                </div>
             </div>
             <div class="menu-item">
-                <h4>Friends List</h4>
-                <p>See who is online and check what games they are playing.</p>
-            </div>
-            <div class="menu-item danger-zone">
-                <h4>🚨 BREAK THE CONSOLE (CRASH TEST)</h4>
-                <p>Simulate a fatal hardware failure / system crash error.</p>
+                <div class="menu-item-icon" style="background: radial-gradient(#ff63a5, transparent);"></div>
+                <div>
+                    <h4>Friends List</h4>
+                    <p>See who is online and check what games they are playing.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -419,155 +430,84 @@
         <div class="blade-tab">games</div>
         <div class="blade-content">
             <div class="menu-title">Games Library</div>
-            <div class="menu-item">
-                <h4>Achievements</h4>
-                <p>View unlocked milestones and your total Gamerscore tally.</p>
-            </div>
-            <div class="menu-item">
-                <h4>Played Games History</h4>
-                <p>Browse your recent games and launched disc profiles.</p>
+            <div class="grid">
+                <div class="menu-item">
+                    <div class="menu-item-icon" style="background: radial-gradient(#107c10, transparent);"></div>
+                    <div>
+                        <h4>Play Halo 3</h4>
+                        <p>Launch the game currently in disc tray</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-icon" style="background: radial-gradient(#cc1111, transparent);"></div>
+                    <div>
+                        <h4>Achievements</h4>
+                        <p>View locked targets and your total Gamerscore tally.</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-icon" style="background: radial-gradient(#555, transparent);"></div>
+                    <div>
+                        <h4>Xbox Live Arcade</h4>
+                        <p>Play downloaded bite-sized retro games</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="blade-3" class="blade" style="background: linear-gradient(to bottom, #dcdcdc 0%, #b8b8b8 100%); border-left: 4px solid #33ccff;">
-        <div class="blade-tab">media</div>
+        <div class="blade-tab">system</div>
         <div class="blade-content">
-            <div class="menu-title">Media Center</div>
-            <div class="menu-item">
-                <h4>Music Player</h4>
-                <p>Rip tracks from custom CDs or stream custom background audio.</p>
-            </div>
-            <div class="menu-item">
-                <h4>Picture Library</h4>
-                <p>Display image slideshows loaded from plugged USB devices.</p>
+            <div class="menu-title">System Settings</div>
+            <div class="grid">
+                <div class="menu-item">
+                    <div class="menu-item-icon" style="background: radial-gradient(#607d8b, transparent);"></div>
+                    <div>
+                        <h4>Console Settings</h4>
+                        <p>Adjust audio, clock, and widescreen display formats</p>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-icon" style="background: radial-gradient(#795548, transparent);"></div>
+                    <div>
+                        <h4>Storage Management</h4>
+                        <p>Manage content on Hard Drives and Memory Units</p>
+                    </div>
+                </div>
+                <div class="menu-item danger-zone">
+                    <div class="menu-item-icon" style="background: radial-gradient(#b71c1c, transparent);"></div>
+                    <div>
+                        <h4>Simulate Crash</h4>
+                        <p>Trigger a simulated hardware failure error sequence</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+</div> <div class="footer-bar">
+    <div class="btn-hint"><span class="btn-icon btn-lb">LB</span> <span class="btn-icon btn-rb">RB</span> Switch Blade</div>
+    <div class="btn-hint"><span class="btn-icon btn-a">A</span> Select Item</div>
+    <div class="btn-hint">Navigation: Use <strong>Arrow Keys / WASD</strong> & <strong>Enter</strong></div>
 </div>
 
-                <div class="blade" id="blade-1">
-                    <div class="blade-header">Games</div>
-                    <div class="blade-content">
-                        <div class="blade-title">Games library</div>
-                        <div class="grid">
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#107c10, transparent);"></div>
-                                <div>
-                                    <h4>Play Halo 3</h4>
-                                    <p>Launch the game currently in disc tray</p>
-                                </div>
-                            </div>
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#cc1111, transparent);"></div>
-                                <div>
-                                    <h4>Achievements</h4>
-                                    <p>View locked targets and your total Gamerscore</p>
-                                </div>
-                            </div>
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#555, transparent);"></div>
-                                <div>
-                                    <h4>Xbox Live Arcade</h4>
-                                    <p>Play downloaded bite-sized retro games</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div id="crash-screen">
+    <div class="error-message">
+        <p>System error. Please contact Xbox Customer Support.</p>
+        <p style="margin-top: 10px; color: #aaa; font-size: 15px;">Une erreur système s'est produite. Contactez le support technique Xbox.</p>
+    </div>
+    
+    <div class="rrod-ring">
+        <div class="rrod-quadrant q1 rrod-active"></div>
+        <div class="rrod-quadrant q2"></div> 
+        <div class="rrod-quadrant q3 rrod-active"></div>
+        <div class="rrod-quadrant q4 rrod-active"></div>
+    </div>
 
-                <div class="blade" id="blade-2">
-                    <div class="blade-header">Media</div>
-                    <div class="blade-content">
-                        <div class="blade-title">Media Center</div>
-                        <div class="grid">
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#9c27b0, transparent);"></div>
-                                <div>
-                                    <h4>Music Player</h4>
-                                    <p>Listen to custom audio tracks or rip audio CDs</p>
-                                </div>
-                            </div>
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#009688, transparent);"></div>
-                                <div>
-                                    <h4>Video Player</h4>
-                                    <p>Watch saved movies, clips, and media files</p>
-                                </div>
-                            </div>
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#ff5722, transparent);"></div>
-                                <div>
-                                    <h4>Pictures</h4>
-                                    <p>View custom background photos and screenshots</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="blade" id="blade-3">
-                    <div class="blade-header">System</div>
-                    <div class="blade-content">
-                        <div class="blade-title">System Settings</div>
-                        <div class="grid">
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#607d8b, transparent);"></div>
-                                <div>
-                                    <h4>Console Settings</h4>
-                                    <p>Adjust audio, clock, and widescreen display formats</p>
-                                </div>
-                            </div>
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#795548, transparent);"></div>
-                                <div>
-                                    <h4>Storage Management</h4>
-                                    <p>Manage content on Hard Drives and Memory Units</p>
-                                </div>
-                            </div>
-                            <div class="menu-item">
-                                <div class="menu-item-icon" style="background: radial-gradient(#e91e63, transparent);"></div>
-                                <div>
-                                    <h4>Network Settings</h4>
-                                    <p>Configure IP layouts and test connection integrity</p>
-                                </div>
-                            </div>
-                            <div class="menu-item danger-zone">
-                                <div class="menu-item-icon" style="background: radial-gradient(#b71c1c, transparent);"></div>
-                                <div>
-                                    <h4>Simulate Crash</h4>
-                                    <p>Trigger a simulated hardware failure error sequence</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-bar">
-                <div class="btn-hint"><span class="btn-icon btn-lb">LB</span> <span class="btn-icon btn-rb">RB</span> Switch Blade</div>
-                <div class="btn-hint"><span class="btn-icon btn-a">A</span> Select Item</div>
-                <div class="btn-hint">Navigation: Use <strong>Arrow Keys / WASD</strong> & <strong>Enter</strong></div>
-            </div>
-        </div>
-
-        <div id="crash-screen">
-            <div class="error-message">
-                <p>System error. Please contact Xbox Customer Support.</p>
-                <p style="margin-top: 10px; color: #aaa; font-size: 15px;">Une erreur système s'est produite. Contactez le support technique Xbox.</p>
-            </div>
-            
-            <div class="rrod-ring">
-                <div class="rrod-quadrant q1 rrod-active"></div>
-                <div class="rrod-quadrant q2"></div> 
-                <div class="rrod-quadrant q3 rrod-active"></div>
-                <div class="rrod-quadrant q4 rrod-active"></div>
-            </div>
-
-            <div class="error-code">E74</div>
-            <div class="reset-hint">Press F5 or refresh page to reboot console</div>
-        </div>
+    <div class="error-code">E74</div>
+    <div class="reset-hint">Press F5 or refresh page to reboot console</div>
+</div>
     </div>
 
     <script>
