@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xbox 360</title>
+    <title>Xbox 360 Simulator</title>
     <style>
-        /* --- GLOBAL BASE LAYOUT --- */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -33,7 +32,7 @@
             overflow: hidden;
         }
 
-        /* --- LAYER 1: HARDWARE POWER-ON INTERFACE --- */
+        /* --- POWER LAYER --- */
         #power-on-layer {
             position: absolute;
             top: 0;
@@ -55,18 +54,11 @@
             border-radius: 50%;
             background: linear-gradient(135deg, #2c2c2c, #151515);
             border: 3px solid #3d3d3d;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 2px 5px rgba(255,255,255,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .power-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(16, 124, 16, 0.3);
         }
 
         .power-icon {
@@ -87,25 +79,9 @@
             width: 4px;
             height: 16px;
             background-color: #555555;
-            border-radius: 2px;
         }
 
-        .power-button:active .power-icon,
-        .power-button:active .power-icon::before {
-            background-color: #107c10;
-            border-color: #107c10;
-            border-top-color: transparent;
-        }
-
-        .power-hint {
-            margin-top: 25px;
-            font-size: 14px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #888888;
-        }
-
-        /* --- LAYER 2: STARTUP HARDWARE BOOT LAYER --- */
+        /* --- STARTUP LAYER --- */
         #startup-layer {
             position: absolute;
             top: 0;
@@ -126,198 +102,151 @@
             object-fit: cover;
         }
 
-        /* --- LAYER 3: 2011 METRO TWIST DASHBOARD LAYER --- */
+        /* --- DASHBOARD LAYER --- */
         #dashboard-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #1c1c1c;
-            background-image: radial-gradient(circle at 50% 30%, #2e2e2e 0%, #121212 100%);
+            background: #2a2a2a;
+            background-image: radial-gradient(circle at 50% 30%, #3a3a3a 0%, #1e1e1e 100%);
             opacity: 0;
             display: flex;
             flex-direction: column;
-            transition: opacity 1.2s ease-in-out;
-            overflow: hidden;
+            transition: opacity 0.8s ease-in-out;
             z-index: 5;
+            padding: 40px;
         }
 
-        /* Top Header Metadata Line */
-        .metro-header {
-            width: 100%;
-            padding: 30px 6% 10px 6%;
+        .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
+            width: 100%;
+            margin-bottom: 20px;
         }
 
-        .profile-card {
+        .gamertag-container {
             display: flex;
             align-items: center;
-            gap: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 6px 20px 6px 8px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
         }
 
-        .avatar-circle {
-            width: 34px;
-            height: 34px;
+        .avatar-dot {
+            width: 15px;
+            height: 15px;
+            background-color: #107c10;
             border-radius: 50%;
-            background: #107c10;
-            border: 2px solid #fff;
-        }
-
-        .gamertag {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ffffff;
         }
 
         .live-clock {
             font-size: 18px;
-            font-weight: 300;
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* Horizontal Navigation Links */
-        .metro-nav-tabs {
+        /* --- MAIN MOVEMENT PANEL VIEW --- */
+        .panel-slider-wrapper {
             display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 10px;
-            font-size: 18px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.3);
-            z-index: 10;
-        }
-
-        .metro-tab {
-            padding-bottom: 8px;
-            border-bottom: 4px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .metro-tab.active {
-            color: #ffffff;
-            border-bottom-color: #107c10;
-            transform: scale(1.08);
-        }
-
-        /* Horizontal Carousel Panel Slider Wrapper */
-        .metro-carousel-container {
-            display: flex;
-            width: 400vw; /* 4 sections running side by side */
-            height: 62vh;
+            width: 400vw;
+            height: 70vh;
             transition: transform 0.55s cubic-bezier(0.1, 0.9, 0.2, 1);
-            margin-top: 25px;
         }
 
-        .metro-panel {
+        .dashboard-view-panel {
             width: 100vw;
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 0 6%;
+            padding-right: 15vw;
         }
 
-        .panel-heading-title {
-            font-size: 38px;
-            font-weight: 300;
-            margin-bottom: 25px;
-            color: #ffffff;
+        .panel-main-heading {
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            color: rgba(255, 255, 255, 0.9);
         }
 
-        /* Metro Dynamic Grid Formations */
-        .metro-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 145px);
-            gap: 18px;
+        .panel-divider-line {
             width: 100%;
-            max-width: 1400px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 25px;
         }
 
-        /* Base Metro Flat Tile Styles */
-        .metro-tile {
-            background-color: rgba(255, 255, 255, 0.07);
-            border: 2px solid transparent;
-            padding: 22px;
+        /* --- METRO INTERFACE GRID --- */
+        .metro-tile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 900px;
+        }
+
+        .metro-selection-tile {
+            background-color: rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            position: relative;
+            align-items: center;
+            gap: 20px;
+            border: 2px solid transparent;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.2, 1, 0.2, 1);
+            transition: all 0.2s ease;
         }
 
-        .metro-tile-icon {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 4px;
+        .item-status-glow {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            flex-shrink: 0;
         }
 
-        .metro-tile h4 {
-            margin: 0 0 4px 0;
-            font-size: 19px;
-            font-weight: 600;
+        .tile-text-container h4 {
+            font-size: 18px;
+            margin-bottom: 4px;
             color: #ffffff;
         }
 
-        .metro-tile p {
-            margin: 0;
+        .tile-text-container p {
             font-size: 13px;
-            color: #b0b0b0;
-            line-height: 1.3;
+            color: #aaaaaa;
         }
 
-        /* The signature Xbox Green focus boundary/fill */
-        .metro-tile.selected {
+        /* Focused Green Ring Accent Style */
+        .metro-selection-tile.selected {
             background-color: #107c10;
             border-color: #66cc33;
-            transform: scale(1.03);
-            box-shadow: 0 12px 30px rgba(16, 124, 16, 0.45);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(16, 124, 16, 0.5);
         }
 
-        .metro-tile.selected p {
-            color: #e2e2e2;
+        .metro-selection-tile.selected p {
+            color: #dddddd;
         }
 
-        /* Grid Block Variations */
-        .tile-large { grid-column: span 2; grid-row: span 2; }
-        .tile-wide { grid-column: span 2; }
-
-        /* Interface controls informational footer bar */
-        .footer-bar {
+        /* --- FOOTER OPTIONS --- */
+        .footer-action-bar {
             margin-top: auto;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.25);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 20px 6%;
             display: flex;
-            gap: 40px;
+            gap: 30px;
             font-size: 14px;
             color: rgba(255, 255, 255, 0.5);
-            z-index: 10;
         }
 
-        .footer-bar strong {
-            color: #ffffff;
-            background: rgba(255,255,255,0.1);
-            padding: 2px 6px;
+        .footer-hint-pill {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
             border-radius: 4px;
-            margin-right: 4px;
+            color: #fff;
+            margin-right: 5px;
         }
 
-        /* --- LAYER 4: SYSTEM FAILURE / RED RING CRASH DISPLAY --- */
+        /* --- HARDWARE EXCEPTION OVERLAY --- */
         #crash-screen {
             position: absolute;
             top: 0;
@@ -329,40 +258,32 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 50px;
             z-index: 40;
-            font-family: Arial, sans-serif;
         }
 
         .error-message {
             color: #ffffff;
             font-size: 20px;
-            text-align: left;
-            max-width: 650px;
+            max-width: 600px;
             line-height: 1.6;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
-        /* The Ring of Death Render Engine */
         .rrod-ring {
             width: 90px;
             height: 90px;
             border-radius: 50%;
             border: 8px solid #222222;
-            position: relative;
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
             gap: 4px;
             padding: 2px;
-            background-color: transparent;
         }
 
         .rrod-quadrant {
             width: 100%;
             height: 100%;
-            border-radius: 4px;
-            transition: background-color 0.3s;
         }
 
         .q1 { border-top-right-radius: 40px; }
@@ -379,12 +300,11 @@
             color: #ffffff;
             font-size: 45px;
             font-weight: bold;
-            margin-top: 40px;
-            letter-spacing: 1px;
+            margin-top: 30px;
         }
 
         .reset-hint {
-            margin-top: 20px;
+            margin-top: 15px;
             color: #555555;
             font-size: 14px;
         }
@@ -395,383 +315,256 @@
     <div id="screen">
 
         <div id="power-on-layer">
-            <div class="power-button" onclick="powerOnConsole()" role="button" aria-label="Power On Console">
+            <div class="power-button" onclick="powerOnConsole()">
                 <div class="power-icon"></div>
             </div>
-            <div class="power-hint">Press Power Button to Boot</div>
+            <div class="power-hint">Press Power Button</div>
         </div>
 
         <div id="startup-layer">
             <video id="boot-video" preload="auto" muted playsinline>
-                <source src="boot.mp4" type="video/mp4">
+                <source src="xbox360.mp4" type="video/mp4">
             </video>
         </div>
 
         <div id="dashboard-layer">
-            
-            <div class="metro-header">
-                <div class="profile-card">
-                    <div class="avatar-circle"></div>
-                    <div class="gamertag">RetroGamer360</div>
+            <div class="dashboard-header">
+                <div class="gamertag-container">
+                    <div class="avatar-dot"></div>
+                    <div class="gamertag-text">RetroGamer360</div>
                 </div>
-                <div class="live-clock" id="dashboard-clock">12:00 PM</div>
+                <div class="live-clock" id="live-clock">12:00 PM</div>
             </div>
 
-            <div class="metro-nav-tabs">
-                <div class="metro-tab active" id="tab-0">Marketplace</div>
-                <div class="metro-tab" id="tab-1">Xbox Live</div>
-                <div class="metro-tab" id="tab-2">Games</div>
-                <div class="metro-tab" id="tab-3">System</div>
+            <div class="panel-slider-wrapper" id="panel-slider">
+
+                <div class="dashboard-view-panel">
+                    <div class="panel-main-heading">Xbox Live</div>
+                    <div class="panel-divider-line"></div>
+                    <div class="metro-tile-grid" id="grid-0">
+                        <div class="metro-selection-tile selected">
+                            <div class="item-status-glow" style="background: radial-gradient(#ffaa00, transparent);"></div>
+                            <div class="tile-text-container">
+                                <h4>Xbox Live Marketplace</h4>
+                                <p>Download new arcade games, demos, and trailers</p>
+                            </div>
+                        </div>
+                        <div class="metro-selection-tile">
+                            <div class="item-status-glow" style="background: radial-gradient(#00a2ff, transparent);"></div>
+                            <div class="tile-text-container">
+                                <h4>Friends List</h4>
+                                <p>See what your friends are playing online</p>
+                            </div>
+                        </div>
+                        <div class="metro-selection-tile">
+                            <div class="item-status-glow" style="background: radial-gradient(#ff00aa, transparent);"></div>
+                            <div class="tile-text-container">
+                                <h4>Messages</h4>
+                                <p>Check your system invites and text messages</p>
+                            </div>
+                        </div>
+                        <div class="metro-selection-tile">
+                            <div class="item-status-glow" style="background: radial-gradient(#00ffaa, transparent);"></div>
+                            <div class="tile-text-container">
+                                <h4>Redeem Code</h4>
+                                <p>Enter a 25-digit prepaid card token or ticket</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-view-panel">
+                    <div class="panel-main-heading">Games</div>
+                    <div class="panel-divider-line"></div>
+                    <div class="metro-tile-grid" id="grid-1">
+                        <div class="metro-selection-tile">
+                            <div class="item-status-glow" style="background: radial-gradient(#107c10, transparent);"></div>
+                            <div class="tile-text-container">
+                                <h4>Play Disc</h4>
+                                <p>Launch the optical media currently inside the tray</p>
+                            </div>
+                        </div>
+                        <div class="metro-selection-tile">
+                            <div class="item-status-glow" style="background: radial-gradient(#cc1111, transparent);"></div>
+                            <div class="tile-text-container">
+                                <h4>Achievements</h4>
+                                <p>View unlocked milestones and total milestone points</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-view-panel">
+                    <div class="panel-main-heading">System</div>
+                    <div class="panel-divider-line"></div>
+                    <div class="metro-tile-grid" id="grid-2">
+                        <div class="metro-selection-tile">
+                            <div class="item-status-glow" style="background: radial-gradient(#607d8b, transparent);"></div>
+                            <div class="tile-text-container">
+                                <h4>Console Settings</h4>
+                                <p>Configure screen display aspect ratios and system audio</p>
+                            </div>
+                        </div>
+                        <div class="metro-selection-tile danger-zone">
+                            <div class="item-status-glow" style="background: radial-gradient(#b71c1c, transparent);"></div>
+                            <div class="tile-text-container">
+                                <h4>🚨 Trigger Hardware Fault</h4>
+                                <p>Simulate a general console diagnostic configuration error</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="metro-carousel-container" id="metro-slider">
-
-                <div class="metro-panel">
-                    <div class="panel-heading-title">Xbox Live Marketplace</div>
-                    <div class="metro-grid" id="grid-0">
-                        <div class="metro-tile tile-large selected">
-                            <div class="metro-tile-icon" style="background: radial-gradient(#f68c1f, transparent);"></div>
-                            <h4>Games & Demos</h4>
-                            <p>Download new indie titles, trials, and upcoming video game previews.</p>
-                        </div>
-                        <div class="metro-tile tile-wide">
-                            <div class="metro-tile-icon" style="background: radial-gradient(#333, transparent);"></div>
-                            <h4>Themes & Gamer Pics</h4>
-                            <p>Customize your profile card images and wallpaper assets.</p>
-                        </div>
-                        <div class="metro-tile">
-                            <h4>Featured Add-ons</h4>
-                            <p>Explore game expansions.</p>
-                        </div>
-                        <div class="metro-tile">
-                            <h4>Search Store</h4>
-                            <p>Find global content items.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="metro-panel">
-                    <div class="panel-heading-title">Xbox Live Community</div>
-                    <div class="metro-grid" id="grid-1">
-                        <div class="metro-tile tile-wide">
-                            <div class="metro-tile-icon" style="background: radial-gradient(#ff63a5, transparent);"></div>
-                            <h4>Friends List</h4>
-                            <p>See friends currently online and join their ongoing gameplay lobbies.</p>
-                        </div>
-                        <div class="metro-tile">
-                            <h4>Messages</h4>
-                            <p>Review standard alerts.</p>
-                        </div>
-                        <div class="metro-tile">
-                            <h4>Party Chat</h4>
-                            <p>Open voice channels.</p>
-                        </div>
-                        <div class="metro-tile tile-large">
-                            <div class="metro-tile-icon" style="background: radial-gradient(#ff63a5, transparent);"></div>
-                            <h4>Social Activity Feed</h4>
-                            <p>Track unlocked milestones, uploaded clips, and status changes across the network.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="metro-panel">
-                    <div class="panel-heading-title">Games Library</div>
-                    <div class="metro-grid" id="grid-2">
-                        <div class="metro-tile tile-large">
-                            <div class="metro-tile-icon" style="background: radial-gradient(#107c10, transparent);"></div>
-                            <h4>Play Halo 3</h4>
-                            <p>Launch the optical disc tray profile currently mounted inside your console.</p>
-                        </div>
-                        <div class="metro-tile tile-wide">
-                            <div class="metro-tile-icon" style="background: radial-gradient(#cc1111, transparent);"></div>
-                            <h4>Achievements</h4>
-                            <p>Examine target objectives and review historical Gamerscore summaries.</p>
-                        </div>
-                        <div class="metro-tile">
-                            <h4>Xbox Live Arcade</h4>
-                            <p>Launch retro installations.</p>
-                        </div>
-                        <div class="metro-tile">
-                            <h4>Cloud Storage</h4>
-                            <p>Synchronize game files.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="metro-panel">
-                    <div class="panel-heading-title">System Settings</div>
-                    <div class="metro-grid" id="grid-3">
-                        <div class="metro-tile tile-wide">
-                            <div class="metro-tile-icon" style="background: radial-gradient(#607d8b, transparent);"></div>
-                            <h4>Console Settings</h4>
-                            <p>Adjust visual output resolutions, system audio formats, and localized time tracking.</p>
-                        </div>
-                        <div class="metro-tile">
-                            <h4>Storage Profiles</h4>
-                            <p>Format hard drives.</p>
-                        </div>
-                        <div class="metro-tile">
-                            <h4>Network Engine</h4>
-                            <p>Configure access points.</p>
-                        </div>
-                        <div class="metro-tile tile-wide danger-zone">
-                            <div class="metro-tile-icon" style="background: radial-gradient(#b71c1c, transparent);"></div>
-                            <h4>🚨 Simulate Console Crash</h4>
-                            <p>Force execute a hardware verification failure crash sequence test.</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div> <div class="footer-bar">
-                <div><strong>LB</strong> / <strong>RB</strong> Switch Panels</div>
-                <div><strong>Arrow Keys / WASD</strong> Traverse Grid</div>
-                <div><strong>Enter</strong> Select Option</div>
+            <div class="footer-action-bar">
+                <div><span class="footer-hint-pill">LB / RB</span> Switch Panel Sections</div>
+                <div><span class="footer-hint-pill">Arrow Keys / WASD</span> Navigate Grid Elements</div>
+                <div><span class="footer-hint-pill">Enter</span> Confirm Item Selection</div>
             </div>
+        </div>
 
-        </div> <div id="crash-screen">
+        <div id="crash-screen">
             <div class="error-message">
                 <p>System error. Please contact Xbox Customer Support.</p>
-                <p style="margin-top: 12px; color: #777777; font-size: 16px;">Une erreur système s'est produite. Contactez le support technique Xbox.</p>
+                <p style="margin-top: 10px; color: #555; font-size: 15px;">Une erreur système s'est produite. Contactez le support technique Xbox.</p>
             </div>
-            
             <div class="rrod-ring">
                 <div class="rrod-quadrant q1 rrod-active"></div>
                 <div class="rrod-quadrant q2"></div> 
                 <div class="rrod-quadrant q3 rrod-active"></div>
                 <div class="rrod-quadrant q4 rrod-active"></div>
             </div>
-
             <div class="error-code">E74</div>
-            <div class="reset-hint">Press F5 or refresh page to restart emulation</div>
+            <div class="reset-hint">Press F5 or refresh page to reboot console interface</div>
         </div>
 
-    </div> <script>
-        let systemCrashed = false;
-        let currentTabIdx = 0;
-        const totalTabsCount = 4;
+    </div>
 
-        // Sound configuration mapping
-        const bootVideoElement = document.getElementById('boot-video');
-        const startupAudioElement = new Audio('xbox360a.mp3');
+    <script>
+        let isSystemHalted = false;
+        let activePanelIdx = 0;
+        const totalPanelsCount = 3;
+
+        const bootVideoNode = document.getElementById('boot-video');
+        const bootAudioTrack = new Audio('xbox360a.mp3');
 
         function powerOnConsole() {
-            // 1. Instantly fade and remove physical power button interface
-            const powerLayer = document.getElementById('power-on-layer');
-            if (powerLayer) {
-                powerLayer.style.opacity = '0';
-                setTimeout(() => powerLayer.style.display = 'none', 500);
-            }
-
-            // 2. Bring up the startup track display layer
-            const startupLayer = document.getElementById('startup-layer');
-            if (startupLayer) startupLayer.style.display = 'flex';
+            document.getElementById('power-on-layer').style.opacity = '0';
+            setTimeout(() => document.getElementById('power-on-layer').style.display = 'none', 500);
+            document.getElementById('startup-layer').style.display = 'flex';
             
-            // 3. Reset hardware track pointer lines
-            if (bootVideoElement) bootVideoElement.currentTime = 0;
-            if (startupAudioElement) startupAudioElement.currentTime = 0;
+            if (bootVideoNode) bootVideoNode.currentTime = 0;
+            if (bootAudioTrack) bootAudioTrack.currentTime = 0;
 
-            // 4. Fire target start sound asset independently 
-            if (startupAudioElement) {
-                startupAudioElement.play().catch(err => console.log("Audio block bypass:", err));
+            bootAudioTrack.play().catch(() => {});
+            if (bootVideoNode) {
+                bootVideoNode.play().catch(() => {});
             }
 
-            // 5. Play startup media track utilizing promise frameworks
-            if (bootVideoElement) {
-                try {
-                    let videoPromise = bootVideoElement.play();
-                    if (videoPromise !== undefined) {
-                        videoPromise.catch(error => {
-                            console.log("Video track delayed, fallback timer handling ready.", error);
-                        });
-                    }
-                } catch(error) {
-                    console.log("Direct track access error:", error);
-                }
-            }
-
-            // 6. Safety boundary fallback timer (Forces dashboard launch if video encounters exceptions)
-            let safetyFallbackTimer = setTimeout(() => {
-                console.log("Fallback execution triggered.");
-                skipToDashboard();
-            }, 6000);
-
-            if (bootVideoElement) {
-                bootVideoElement.onended = () => {
-                    clearTimeout(safetyFallbackTimer);
-                    skipToDashboard();
+            let safetyTimer = setTimeout(() => launchMainDashboard(), 6000);
+            if (bootVideoNode) {
+                bootVideoNode.onended = () => {
+                    clearTimeout(safetyTimer);
+                    launchMainDashboard();
                 };
             }
         }
 
-        function skipToDashboard() {
-            const startupLayer = document.getElementById('startup-layer');
-            const dashboardLayer = document.getElementById('dashboard-layer');
-            
-            if (startupLayer) startupLayer.style.opacity = '0';
+        function launchMainDashboard() {
+            document.getElementById('startup-layer').style.opacity = '0';
             setTimeout(() => {
-                if (startupLayer) startupLayer.style.display = 'none';
-                if (dashboardLayer) {
-                    dashboardLayer.style.opacity = '1';
-                    syncMetroUIState();
-                }
+                document.getElementById('startup-layer').style.display = 'none';
+                document.getElementById('dashboard-layer').style.opacity = '1';
+                refreshCarouselView();
             }, 600);
         }
 
-        // --- METRO UI CAROUSEL MANAGEMENT CONTROLLER ---
-        function syncMetroUIState() {
-            if (systemCrashed) return;
-
-            // Shift horizontal track via negative view widths
-            const sliderCanvas = document.getElementById('metro-slider');
-            if (sliderCanvas) {
-                sliderCanvas.style.transform = `translateX(-${currentTabIdx * 100}vw)`;
-            }
-
-            // Sync index markers along the navigation line
-            for (let i = 0; i < totalTabsCount; i++) {
-                const targetTabLink = document.getElementById(`tab-${i}`);
-                if (targetTabLink) {
-                    if (i === currentTabIdx) {
-                        targetTabLink.classList.add('active');
-                    } else {
-                        targetTabLink.classList.remove('active');
-                    }
-                }
-            }
-            
-            // Handle automatic row highlighting adjustments
-            resetGridTileSelection();
+        function refreshCarouselView() {
+            if (isSystemHalted) return;
+            document.getElementById('panel-slider').style.transform = `translateX(-${activePanelIdx * 100}vw)`;
+            resetLocalTileSelection();
         }
 
-        function resetGridTileSelection() {
-            // Un-highlight all tiles globally across all grids
-            document.querySelectorAll('.metro-tile').forEach(tile => tile.classList.remove('selected'));
-            
-            // Set the first item of the active grid panel to selected
-            const activeGridContainer = document.getElementById(`grid-${currentTabIdx}`);
-            if (activeGridContainer) {
-                const initialTile = activeGridContainer.querySelector('.metro-tile');
-                if (initialTile) initialTile.classList.add('selected');
+        function resetLocalTileSelection() {
+            document.querySelectorAll('.metro-selection-tile').forEach(tile => tile.classList.remove('selected'));
+            const currentGrid = document.getElementById(`grid-${activePanelIdx}`);
+            if (currentGrid) {
+                const standardTile = currentGrid.querySelector('.metro-selection-tile');
+                if (standardTile) standardTile.classList.add('selected');
             }
         }
 
-        function traversePanelGrid(movementDirection) {
-            if (systemCrashed) return;
-            const activeGridContainer = document.getElementById(`grid-${currentTabIdx}`);
-            if (!activeGridContainer) return;
+        function stepThroughGridItems(stepDir) {
+            if (isSystemHalted) return;
+            const currentGrid = document.getElementById(`grid-${activePanelIdx}`);
+            if (!currentGrid) return;
 
-            const gridTilesList = Array.from(activeGridContainer.querySelectorAll('.metro-tile'));
-            let highlightedIndex = gridTilesList.findIndex(tile => tile.classList.contains('selected'));
-            if (highlightedIndex === -1) return;
+            const gridTiles = Array.from(currentGrid.querySelectorAll('.metro-selection-tile'));
+            let activeElementIdx = gridTiles.findIndex(tile => tile.classList.contains('selected'));
+            if (activeElementIdx === -1) return;
 
-            gridTilesList[highlightedIndex].classList.remove('selected');
+            gridTiles[activeElementIdx].classList.remove('selected');
 
-            if (movementDirection === 'forward') {
-                highlightedIndex = (highlightedIndex + 1) % gridTilesList.length;
-            } else if (movementDirection === 'backward') {
-                highlightedIndex = (highlightedIndex - 1 + gridTilesList.length) % gridTilesList.length;
-            }
+            if (stepDir === 'next') activeElementIdx = (activeElementIdx + 1) % gridTiles.length;
+            if (stepDir === 'prev') activeElementIdx = (activeElementIdx - 1 + gridTiles.length) % gridTiles.length;
 
-            gridTilesList[highlightedIndex].classList.add('selected');
-            executeInterfaceTickSound();
+            gridTiles[activeElementIdx].classList.add('selected');
+            playSelectionTick();
         }
 
-        function executeInterfaceTickSound() {
+        function playSelectionTick() {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
-                const synthContext = new AudioContext();
-                let frequencyOscillator = synthContext.createOscillator();
-                let soundGainNode = synthContext.createGain();
-                
-                frequencyOscillator.type = 'sine'; 
-                frequencyOscillator.frequency.setValueAtTime(260, synthContext.currentTime);
-                soundGainNode.gain.setValueAtTime(0.03, synthContext.currentTime);
-                soundGainNode.gain.exponentialRampToValueAtTime(0.001, synthContext.currentTime + 0.06);
-                
-                frequencyOscillator.connect(soundGainNode); 
-                soundGainNode.connect(synthContext.destination);
-                
-                frequencyOscillator.start(); 
-                frequencyOscillator.stop(synthContext.currentTime + 0.06);
-            } catch(error){}
+                const sysAudioCtx = new AudioContext();
+                let soundOsc = sysAudioCtx.createOscillator();
+                let outputGain = sysAudioCtx.createGain();
+                soundOsc.type = 'sine';
+                soundOsc.frequency.setValueAtTime(280, sysAudioCtx.currentTime);
+                outputGain.gain.setValueAtTime(0.02, sysAudioCtx.currentTime);
+                outputGain.gain.exponentialRampToValueAtTime(0.001, sysAudioCtx.currentTime + 0.05);
+                soundOsc.connect(outputGain);
+                outputGain.connect(sysAudioCtx.destination);
+                soundOsc.start();
+                soundOsc.stop(sysAudioCtx.currentTime + 0.05);
+            } catch(e){}
         }
 
-        function forceSystemCrashSequence() {
-            systemCrashed = true;
-            
-            // Trigger failure tone syntax
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                const synthContext = new AudioContext();
-                let frequencyOscillator = synthContext.createOscillator();
-                let soundGainNode = synthContext.createGain();
-                
-                frequencyOscillator.type = 'sawtooth';
-                frequencyOscillator.frequency.setValueAtTime(100, synthContext.currentTime);
-                soundGainNode.gain.setValueAtTime(0.2, synthContext.currentTime);
-                soundGainNode.gain.linearRampToValueAtTime(0.001, synthContext.currentTime + 1.5);
-                
-                frequencyOscillator.connect(soundGainNode);
-                soundGainNode.connect(synthContext.destination);
-                
-                frequencyOscillator.start();
-                frequencyOscillator.stop(synthContext.currentTime + 1.5);
-            } catch(error){}
-
-            const dashboardLayer = document.getElementById('dashboard-layer');
-            const crashScreenLayer = document.getElementById('crash-screen');
-            
-            if (dashboardLayer) dashboardLayer.style.display = 'none';
-            if (crashScreenLayer) crashScreenLayer.style.display = 'flex';
+        function executeHardwareFaultScreen() {
+            isSystemHalted = true;
+            document.getElementById('dashboard-layer').style.display = 'none';
+            document.getElementById('crash-screen').style.display = 'flex';
         }
 
-        // --- HARDWARE CONTROLLER LISTENER MODULES ---
-        window.addEventListener('keydown', (event) => {
+        window.addEventListener('keydown', (e) => {
             const dashboardLayer = document.getElementById('dashboard-layer');
-            if (systemCrashed || !dashboardLayer || dashboardLayer.style.opacity !== '1') return;
+            if (isSystemHalted || !dashboardLayer || dashboardLayer.style.opacity !== '1') return;
 
-            const standardKey = event.key;
-
-            // LB/RB bumper logic shifts active grid indexes left and right
-            if (standardKey === 'q' || standardKey === 'Q' || standardKey === 'ArrowLeft' || standardKey === 'a' || standardKey === 'A') {
-                if (currentTabIdx > 0) { 
-                    currentTabIdx--; 
-                    syncMetroUIState(); 
-                    executeInterfaceTickSound(); 
-                }
-            } else if (standardKey === 'e' || standardKey === 'E' || standardKey === 'ArrowRight' || standardKey === 'd' || standardKey === 'D') {
-                if (currentTabIdx < totalTabsCount - 1) { 
-                    currentTabIdx++; 
-                    syncMetroUIState(); 
-                    executeInterfaceTickSound(); 
-                }
-            } else if (standardKey === 'ArrowDown' || standardKey === 's' || standardKey === 'S') {
-                traversePanelGrid('forward');
-            } else if (standardKey === 'ArrowUp' || standardKey === 'w' || standardKey === 'W') {
-                traversePanelGrid('backward');
-            } else if (standardKey === 'Enter') {
-                const activeGridContainer = document.getElementById(`grid-${currentTabIdx}`);
-                const activeSelectionTile = activeGridContainer ? activeGridContainer.querySelector('.metro-tile.selected') : null;
-                
-                if (activeSelectionTile) {
-                    if (activeSelectionTile.classList.contains('danger-zone')) {
-                        forceSystemCrashSequence();
+            if (e.key === 'q' || e.key === 'Q' || e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                if (activePanelIdx > 0) { activePanelIdx--; refreshCarouselView(); playSelectionTick(); }
+            } else if (e.key === 'e' || e.key === 'E' || e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+                if (activePanelIdx < totalPanelsCount - 1) { activePanelIdx++; refreshCarouselView(); playSelectionTick(); }
+            } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+                stepThroughGridItems('next');
+            } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+                stepThroughGridItems('prev');
+            } else if (e.key === 'Enter') {
+                const currentGrid = document.getElementById(`grid-${activePanelIdx}`);
+                const selection = currentGrid ? currentGrid.querySelector('.metro-selection-tile.selected') : null;
+                if (selection) {
+                    if (selection.classList.contains('danger-zone')) {
+                        executeHardwareFaultScreen();
                     } else {
-                        const tileHeaderNode = activeSelectionTile.querySelector('h4');
-                        const tileHeadlineText = tileHeaderNode ? tileHeaderNode.innerText : "Asset";
-                        alert(`Launching Virtual Operation: "${tileHeadlineText}"`);
+                        alert(`Action triggered: ${selection.querySelector('h4').innerText}`);
                     }
                 }
             }
         });
 
-        // Background system clock automation loop
         setInterval(() => {
-            const timestampData = new Date();
-            const clockNode = document.getElementById('dashboard-clock');
-            if (clockNode) {
-                clockNode.innerText = timestampData.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            }
+            const dateObj = new Date();
+            const clockTarget = document.getElementById('live-clock');
+            if (clockTarget) clockTarget.innerText = dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }, 1000);
     </script>
 </body>
