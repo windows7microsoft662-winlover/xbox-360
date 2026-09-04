@@ -217,6 +217,7 @@
             color: #aaaaaa;
         }
 
+        /* Focused Green Ring Accent Style */
         .metro-selection-tile.selected {
             background-color: #107c10;
             border-color: #66cc33;
@@ -283,12 +284,10 @@
         .rrod-quadrant {
             width: 100%;
             height: 100%;
-            background-color: #1a1a1a;
-            transition: background-color 0.3s;
         }
 
-        .q2 { border-top-left-radius: 40px; }
         .q1 { border-top-right-radius: 40px; }
+        .q2 { border-top-left-radius: 40px; }
         .q3 { border-bottom-left-radius: 40px; }
         .q4 { border-bottom-right-radius: 40px; }
 
@@ -315,7 +314,6 @@
 
     <div id="screen">
 
-        <!-- LAYER 1: ACCESS INTERFACE -->
         <div id="power-on-layer">
             <div class="power-button" onclick="powerOnConsole()">
                 <div class="power-icon"></div>
@@ -323,14 +321,12 @@
             <div class="power-hint">Press Power Button</div>
         </div>
 
-        <!-- LAYER 2: BOOT SEQUENCER -->
         <div id="startup-layer">
             <video id="boot-video" preload="auto" muted playsinline>
                 <source src="boot.mp4" type="video/mp4">
             </video>
         </div>
 
-        <!-- LAYER 3: CAROUSEL INTERFACE -->
         <div id="dashboard-layer">
             <div class="dashboard-header">
                 <div class="gamertag-container">
@@ -342,7 +338,6 @@
 
             <div class="panel-slider-wrapper" id="panel-slider">
 
-                <!-- PANEL 0: XBOX LIVE -->
                 <div class="dashboard-view-panel">
                     <div class="panel-main-heading">Xbox Live</div>
                     <div class="panel-divider-line"></div>
@@ -378,7 +373,6 @@
                     </div>
                 </div>
 
-                <!-- PANEL 1: GAMES -->
                 <div class="dashboard-view-panel">
                     <div class="panel-main-heading">Games</div>
                     <div class="panel-divider-line"></div>
@@ -400,7 +394,6 @@
                     </div>
                 </div>
 
-                <!-- PANEL 2: SYSTEM SETTINGS -->
                 <div class="dashboard-view-panel">
                     <div class="panel-main-heading">System</div>
                     <div class="panel-divider-line"></div>
@@ -431,20 +424,17 @@
             </div>
         </div>
 
-        <!-- LAYER 4: FIXED SINGLE-LIGHT E74 RROD -->
         <div id="crash-screen">
             <div class="error-message">
                 <p>System error. Please contact Xbox Customer Support.</p>
                 <p style="margin-top: 10px; color: #555; font-size: 15px;">Une erreur système s'est produite. Contactez le support technique Xbox.</p>
             </div>
-            
             <div class="rrod-ring">
+                <div class="rrod-quadrant q1 rrod-active"></div>
                 <div class="rrod-quadrant q2"></div> 
-                <div class="rrod-quadrant q1"></div>
-                <div class="rrod-quadrant q3"></div>
+                <div class="rrod-quadrant q3 rrod-active"></div>
                 <div class="rrod-quadrant q4 rrod-active"></div>
             </div>
-
             <div class="error-code">E74</div>
             <div class="reset-hint">Press F5 or refresh page to reboot console interface</div>
         </div>
