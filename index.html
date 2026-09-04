@@ -358,15 +358,15 @@
             background-color: transparent;
         }
 
-       .rrod-quadrant {
+        .rrod-quadrant {
             width: 100%;
             height: 100%;
-            background-color: #1a1a1a;
+            border-radius: 4px;
             transition: background-color 0.3s;
         }
 
-        .q2 { border-top-left-radius: 40px; }
         .q1 { border-top-right-radius: 40px; }
+        .q2 { border-top-left-radius: 40px; }
         .q3 { border-bottom-left-radius: 40px; }
         .q4 { border-bottom-right-radius: 40px; }
 
@@ -514,6 +514,11 @@
                             <h4>Network Engine</h4>
                             <p>Configure access points.</p>
                         </div>
+                        <div class="metro-tile">
+                            <div class="metro-tile-icon" style="background: radial-gradient(#00bcd4, transparent);"></div>
+                            <h4>Check for Updates</h4>
+                            <p>Search Xbox Live for system software updates.</p>
+                        </div>
                         <div class="metro-tile tile-wide danger-zone">
                             <div class="metro-tile-icon" style="background: radial-gradient(#b71c1c, transparent);"></div>
                             <h4>🚨 Simulate Console Crash</h4>
@@ -528,22 +533,11 @@
                 <div><strong>Enter</strong> Select Option</div>
             </div>
 
-        <div id="crash-screen">
+        </div> <div id="crash-screen">
             <div class="error-message">
                 <p>System error. Please contact Xbox Customer Support.</p>
-                <p style="margin-top: 10px; color: #555; font-size: 15px;">Une erreur système s'est produite. Contactez le support technique Xbox.</p>
+                <p style="margin-top: 12px; color: #777777; font-size: 16px;">Une erreur système s'est produite. Contactez le support technique Xbox.</p>
             </div>
-            
-            <div class="rrod-ring">
-                <div class="rrod-quadrant q2"></div> 
-                <div class="rrod-quadrant q1"></div>
-                <div class="rrod-quadrant q3"></div>
-                <div class="rrod-quadrant q4 rrod-active"></div>
-            </div>
-
-            <div class="error-code">E74</div>
-            <div class="reset-hint">Press F5 or refresh page to reboot console interface</div>
-        </div>
             
             <div class="rrod-ring">
                 <div class="rrod-quadrant q1 rrod-active"></div>
@@ -770,7 +764,11 @@
                     } else {
                         const tileHeaderNode = activeSelectionTile.querySelector('h4');
                         const tileHeadlineText = tileHeaderNode ? tileHeaderNode.innerText : "Asset";
-                        alert(`Launching Virtual Operation: "${tileHeadlineText}"`);
+                        if (tileHeadlineText === "Check for Updates") {
+                            alert("Checking for updates...\n\nYour console software is currently up to date.");
+                        } else {
+                            alert(`Launching Virtual Operation: "${tileHeadlineText}"`);
+                        }
                     }
                 }
             }
